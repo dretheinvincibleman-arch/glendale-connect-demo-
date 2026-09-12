@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glendale Connect — feedback and community for the City of Glendale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F2EA;
+    --surface:#FFFFFF;
+    --surface-alt:#ECE6D8;
+    --ink:#202A21;
+    --ink-soft:#5A6459;
+    --green:#2F4538;
+    --green-deep:#1D2E23;
+    --purple:#7A6BA6;
+    --purple-deep:#584A80;
+    --gold:#96691F;
+    --gold-bg:#F1E2C6;
+    --border:#DAD2BC;
+    --red:#9A4433;
+    --red-bg:#F3E1DA;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Newsreader',serif;}
+  a{color:var(--purple-deep);}
+  button{font-family:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
+  .skip-link{position:absolute;left:-999px;top:0;background:var(--green);color:#fff;padding:10px 16px;z-index:100;}
+  .skip-link:focus{left:12px;top:12px;}
+
+  /* ---- top bar ---- */
+  header.topbar{background:var(--green);color:#F5F2EA;position:sticky;top:0;z-index:50;}
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;max-width:1080px;margin:0 auto;gap:24px;}
+  .brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:#fff;flex-shrink:0;}
+  .brand .mark{font-family:'Newsreader',serif;font-weight:600;font-size:21px;}
+  .brand .place{font-size:12.5px;color:#C9D2C4;}
+  nav.tabs{display:flex;gap:4px;flex-wrap:wrap;}
+  nav.tabs button{
+    background:none;border:none;color:#D8DED4;padding:9px 13px;border-radius:8px;
+    font-size:14.5px;cursor:pointer;border-bottom:2px solid transparent;
+  }
+  nav.tabs button:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  nav.tabs button.active{color:#fff;border-bottom:2px solid var(--purple);background:rgba(255,255,255,0.06);}
+
+  /* ---- hero ---- */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--border);}
+  .hero-inner{max-width:1080px;margin:0 auto;padding:64px 28px 40px;display:grid;grid-template-columns:1.35fr 1fr;gap:48px;align-items:end;position:relative;z-index:2;}
+  .ridge{position:absolute;bottom:0;left:0;width:100%;height:120px;z-index:1;opacity:0.5;}
+  .hero h1{font-size:44px;font-weight:500;line-height:1.14;margin:0 0 18px;max-width:15ch;}
+  .hero p.lede{font-size:17px;color:var(--ink-soft);max-width:46ch;margin:0 0 26px;}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:8px;
+    font-size:14.5px;font-weight:500;cursor:pointer;text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--purple);color:#fff;}
+  .btn-primary:hover{background:var(--purple-deep);}
+  .btn-ghost{background:transparent;color:var(--green);border-color:var(--green);}
+  .btn-ghost:hover{background:var(--surface-alt);}
+  .stat-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;}
+  .stat-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
+  .stat-row:last-child{border-bottom:none;}
+  .stat-row .num{font-family:'Newsreader',serif;font-size:22px;color:var(--green-deep);}
+  .stat-row .label{font-size:13.5px;color:var(--ink-soft);align-self:center;}
+
+  /* ---- community pulse ticker ---- */
+  .pulse-bar{background:var(--green-deep);color:#E7E2D2;overflow:hidden;white-space:nowrap;padding:9px 0;}
+  .pulse-track{display:inline-flex;gap:48px;animation:pulse-scroll 34s linear infinite;padding-left:100%;}
+  .pulse-bar:hover .pulse-track{animation-play-state:paused;}
+  .pulse-item{font-size:13px;display:inline-flex;align-items:center;gap:8px;}
+  .pulse-item .dot{width:5px;height:5px;border-radius:50%;background:var(--purple);}
+  @keyframes pulse-scroll{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
+  @media (prefers-reduced-motion:reduce){ .pulse-track{animation:none;padding-left:0;} }
+
+  /* ---- why / mission section ---- */
+  .why-section{background:var(--surface-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px 0;position:relative;}
+  .why-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;}
+  @media (max-width:760px){.why-grid{grid-template-columns:1fr;}}
+  .why-item{position:relative;padding-left:0;}
+  .why-item .why-num{font-family:'Newsreader',serif;font-size:34px;color:var(--purple);display:block;margin-bottom:6px;}
+  .why-item h4{margin:0 0 6px;font-size:16px;font-weight:500;}
+  .why-item p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+
+  /* ---- testimonials ---- */
+  .voices{padding:48px 0;}
+  .voices-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:820px){.voices-grid{grid-template-columns:1fr;}}
+  .voice-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;position:relative;}
+  .voice-card .quote-mark{font-family:'Newsreader',serif;font-size:40px;color:var(--purple);line-height:0.5;display:block;margin-bottom:10px;}
+  .voice-card p.quote{font-size:14.5px;margin:0 0 14px;color:var(--ink);}
+  .voice-who{display:flex;align-items:center;gap:10px;}
+  .voice-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold-bg);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-size:13px;flex-shrink:0;}
+  .voice-name{font-size:13px;font-weight:500;margin:0;}
+  .voice-tag{font-size:12px;color:var(--ink-soft);margin:0;}
+
+  /* ---- blossom texture ---- */
+  .blossom{position:absolute;border-radius:50%;background:var(--purple);opacity:0.14;}
+  .why-section .blossom{width:120px;height:120px;top:-40px;right:6%;}
+  .why-section .blossom.b2{width:70px;height:70px;background:var(--gold);top:auto;bottom:-24px;left:8%;opacity:0.16;}
+
+  /* ---- real ad units ---- */
+  .adunit-wrap{margin:18px 0;text-align:center;}
+  .adunit-label{font-size:10.5px;color:var(--ink-soft);letter-spacing:0.03em;margin-bottom:4px;}
+  .ad-placeholder{
+    border:2px dashed #C7A55C;background:var(--gold-bg);border-radius:8px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:18px;color:var(--gold);text-align:center;margin:18px 0;
+  }
+  .ad-placeholder .ad-size{font-family:'Newsreader',serif;font-size:16px;margin-bottom:4px;}
+  .ad-placeholder .ad-sub{font-size:12px;color:var(--ink-soft);}
+  .ad-leaderboard{min-height:90px;}
+  .ad-rectangle{min-height:250px;}
+  .ad-skyscraper{min-height:280px;}
+
+  /* ---- sections ---- */
+  section.view{display:none;padding:44px 0 80px;}
+  section.view.active{display:block;}
+  .section-head{margin-bottom:28px;max-width:66ch;}
+  .section-head h2{font-size:28px;font-weight:500;margin:0 0 8px;}
+  .section-head p{color:var(--ink-soft);margin:0;font-size:15px;}
+
+  .layout-2col{display:grid;grid-template-columns:1.5fr 1fr;gap:36px;align-items:start;}
+  @media (max-width:820px){.layout-2col{grid-template-columns:1fr;} .hero-inner{grid-template-columns:1fr;} nav.tabs{display:none;} .topbar-inner{flex-wrap:wrap;} .mobile-nav{display:flex !important;}}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13.5px;font-weight:500;margin-bottom:6px;color:var(--green-deep);}
+  .field input, .field select, .field textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;
+    background:var(--bg);font-family:inherit;font-size:14.5px;color:var(--ink);
+  }
+  .field textarea{min-height:90px;resize:vertical;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--purple);outline-offset:1px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:520px){.field-row{grid-template-columns:1fr;}}
+  .err{color:var(--red);font-size:13px;margin-top:5px;display:none;}
+
+  /* feedback list */
+  .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .chip{padding:6px 13px;border-radius:100px;border:1px solid var(--border);background:var(--surface);font-size:13px;cursor:pointer;color:var(--ink-soft);}
+  .chip.active{background:var(--green);color:#fff;border-color:var(--green);}
+  .feedback-item{
+    background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--purple);
+    border-radius:8px;padding:16px 18px;margin-bottom:12px;
+  }
+  .feedback-item.cat-safety{border-left-color:var(--red);}
+  .feedback-item.cat-parks{border-left-color:#4C7A4E;}
+  .feedback-item.cat-streets{border-left-color:var(--gold);}
+  .feedback-item.cat-housing{border-left-color:var(--purple);}
+  .feedback-item.cat-other{border-left-color:var(--ink-soft);}
+  .fi-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .fi-title{font-weight:500;font-size:15.5px;margin:0;}
+  .fi-meta{font-size:12.5px;color:var(--ink-soft);margin:2px 0 8px;}
+  .fi-body{font-size:14px;color:var(--ink);margin:0 0 12px;}
+  .fi-bottom{display:flex;align-items:center;justify-content:space-between;}
+  .status-dot{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);}
+  .status-dot span.dot{width:8px;height:8px;border-radius:50%;background:var(--ink-soft);}
+  .status-new .dot{background:var(--purple);}
+  .status-review .dot{background:var(--gold);}
+  .status-progress .dot{background:#3E7CB8;}
+  .status-resolved .dot{background:#4C7A4E;}
+  .upvote-btn{display:flex;align-items:center;gap:6px;background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;padding:6px 11px;cursor:pointer;font-size:13px;color:var(--green-deep);}
+  .upvote-btn:hover{background:var(--gold-bg);}
+
+  /* discussions */
+  .thread{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:12px;cursor:pointer;}
+  .thread:hover{border-color:var(--purple);}
+  .thread h3{margin:0 0 4px;font-size:16px;font-weight:500;}
+  .thread .meta{font-size:12.5px;color:var(--ink-soft);}
+  .thread .snippet{font-size:14px;color:var(--ink-soft);margin:8px 0 0;}
+  .reply{border-top:1px solid var(--border);padding:12px 0 0;margin-top:12px;}
+  .reply .meta{font-size:12px;color:var(--ink-soft);margin-bottom:3px;}
+  .thread-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+  .back-link{background:none;border:none;color:var(--purple-deep);cursor:pointer;font-size:14px;padding:0 0 16px;display:inline-flex;align-items:center;gap:6px;}
+
+  /* polls */
+  .poll-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;}
+  .poll-card h3{margin:0 0 4px;font-size:17px;font-weight:500;}
+  .poll-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;}
+  .poll-option{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;position:relative;overflow:hidden;background:var(--bg);}
+  .poll-option:hover{border-color:var(--purple);}
+  .poll-option .fill{position:absolute;left:0;top:0;bottom:0;background:var(--gold-bg);z-index:0;}
+  .poll-option .txt{position:relative;z-index:1;display:flex;justify-content:space-between;font-size:14px;}
+  .poll-voted{font-size:12.5px;color:var(--ink-soft);margin-top:8px;}
+
+  /* council */
+  .council-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:760px){.council-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.council-grid{grid-template-columns:1fr;}}
+  .council-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;}
+  .avatar{width:52px;height:52px;border-radius:50%;background:var(--surface-alt);color:var(--green-deep);display:flex;align-items:center;justify-content:center;font-family:'Newsreader',serif;font-size:18px;margin-bottom:12px;}
+  .council-card h3{margin:0 0 2px;font-size:16px;font-weight:500;}
+  .council-card .role{font-size:13px;color:var(--purple-deep);margin-bottom:10px;}
+  .council-card .hours{font-size:13px;color:var(--ink-soft);border-top:1px solid var(--border);padding-top:10px;margin-top:10px;}
+  .sample-note{font-size:12.5px;color:var(--ink-soft);background:var(--surface-alt);border-radius:8px;padding:10px 14px;margin-bottom:22px;}
+
+  /* pricing */
+  .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:820px){.pricing-grid{grid-template-columns:1fr;}}
+  .price-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;}
+  .price-card.featured{border:2px solid var(--purple);}
+  .price-badge{background:var(--purple);color:#fff;font-size:12px;padding:3px 11px;border-radius:100px;display:inline-block;margin-bottom:12px;width:fit-content;}
+  .price-card h3{margin:0 0 4px;font-size:19px;font-weight:500;}
+  .price-amount{font-family:'Newsreader',serif;font-size:30px;margin:6px 0 4px;}
+  .price-sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
+  .price-card ul{list-style:none;padding:0;margin:0 0 20px;flex:1;}
+  .price-card li{font-size:13.5px;padding:7px 0;border-bottom:1px solid var(--border);color:var(--ink);}
+  .price-card li:last-child{border-bottom:none;}
+
+  /* ad slots */
+  .ad-slot{border:1px dashed var(--gold);background:var(--gold-bg);border-radius:8px;padding:14px 16px;margin:18px 0;}
+  .ad-slot .ad-label{font-size:11px;color:var(--gold);text-transform:none;letter-spacing:0.02em;margin-bottom:6px;}
+  .ad-slot .ad-body{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .ad-slot h4{margin:0 0 3px;font-size:14.5px;font-weight:500;}
+  .ad-slot p{margin:0;font-size:13px;color:var(--ink-soft);}
+  .ad-specs-table{width:100%;border-collapse:collapse;font-size:14px;}
+  .ad-specs-table th, .ad-specs-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+  .ad-specs-table th{color:var(--ink-soft);font-weight:500;font-size:12.5px;}
+
+  footer{background:var(--green-deep);color:#C9D2C4;padding:36px 0;margin-top:0;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;}
+  footer a{color:#E7E2D2;}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;padding:11px 20px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:200;}
+  .toast.show{opacity:1;}
+  .mobile-nav{display:none;gap:6px;padding:0 28px 12px;flex-wrap:wrap;}
+  .mobile-nav select{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);width:100%;}
+  .empty{text-align:center;padding:36px 20px;color:var(--ink-soft);font-size:14px;background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);}
+  .disclosure{font-size:12.5px;color:var(--ink-soft);background:var(--surface-alt);border-radius:8px;padding:10px 14px;margin:0 0 22px;}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#" class="brand" onclick="showView('home');return false;">
+      <span class="mark">Glendale Connect</span>
+      <span class="place">Verdugo &middot; Adams Hill &middot; Montrose &middot; Downtown</span>
+    </a>
+    <nav class="tabs" aria-label="Main">
+      <button data-view="home" class="active">Home</button>
+      <button data-view="feedback">Feedback</button>
+      <button data-view="discussions">Discussions</button>
+      <button data-view="polls">Polls</button>
+      <button data-view="council">Council</button>
+      <button data-view="cities">For cities</button>
+      <button data-view="advertise">Advertise</button>
+    </nav>
+  </div>
+  <div class="mobile-nav">
+    <select id="mobileNavSelect" aria-label="Navigate">
+      <option value="home">Home</option>
+      <option value="feedback">Feedback</option>
+      <option value="discussions">Discussions</option>
+      <option value="polls">Polls</option>
+      <option value="council">Council</option>
+      <option value="cities">For cities</option>
+      <option value="advertise">Advertise</option>
+    </select>
+  </div>
+  <div class="pulse-bar" aria-label="Recent community activity">
+    <div class="pulse-track" id="pulse-track"></div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HOME -->
+<section id="view-home" class="view active">
+  <div class="hero">
+    <svg class="ridge" viewBox="0 0 1080 120" preserveAspectRatio="none" aria-hidden="true">
+      <polygon points="0,120 0,85 90,60 180,78 260,48 340,72 420,42 520,68 610,38 700,65 790,52 870,75 950,55 1030,72 1080,64 1080,120" fill="#2F4538" opacity="0.35"/>
+      <polygon points="0,120 0,70 80,40 160,60 240,25 320,55 400,20 500,50 600,15 700,45 800,30 880,58 960,35 1040,55 1080,45 1080,120" fill="#2F4538"/>
+    </svg>
+    <div class="blossom" style="width:90px;height:90px;top:24px;right:12%;" aria-hidden="true"></div>
+    <div class="blossom" style="width:50px;height:50px;top:80px;right:26%;background:var(--gold);opacity:0.12;" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div>
+        <h1>Where Glendale talks to Glendale.</h1>
+        <p class="lede">Report what needs fixing, weigh in on what's being decided, and hear directly from your council office &mdash; all in one place, built around Glendale's own neighborhoods and the people who live in them.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" onclick="showView('feedback')">Report an issue</button>
+          <button class="btn btn-ghost" onclick="showView('discussions')">Join a discussion</button>
+        </div>
+      </div>
+      <div class="stat-panel">
+        <div class="stat-row"><span class="label">Open issues this month</span><span class="num" id="stat-open">&mdash;</span></div>
+        <div class="stat-row"><span class="label">Resolved this month</span><span class="num" id="stat-resolved">&mdash;</span></div>
+        <div class="stat-row"><span class="label">Active discussions</span><span class="num" id="stat-threads">&mdash;</span></div>
+        <div class="stat-row"><span class="label">Neighborhoods represented</span><span class="num">12</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="ad-placeholder ad-leaderboard">
+      <div class="ad-size">Ad space &middot; 728 &times; 90</div>
+      <div class="ad-sub">Sold to a local business, or filled by Google AdSense once live</div>
+    </div>
+  </div>
+
+  <div class="why-section">
+    <div class="blossom" aria-hidden="true"></div>
+    <div class="blossom b2" aria-hidden="true"></div>
+    <div class="wrap why-grid">
+      <div class="why-item"><span class="why-num">01</span><h4>Feedback used to disappear</h4><p>A call to the city or a comment at a meeting rarely reached the neighbors dealing with the same thing. Now it's on the record and visible.</p></div>
+      <div class="why-item"><span class="why-num">02</span><h4>Council offices get a real signal</h4><p>Upvotes and district tags show which issues actually have momentum, instead of guessing from whoever showed up to speak.</p></div>
+      <div class="why-item"><span class="why-num">03</span><h4>Neighbors find each other</h4><p>Discussions and polls turn one-off complaints into an actual conversation between people who live two blocks apart.</p></div>
+    </div>
+  </div>
+
+  <div class="voices">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What neighbors are saying</h2>
+        <p>Sample resident feedback, shown here to illustrate the kind of engagement this is built for.</p>
+      </div>
+      <div class="voices-grid">
+        <div class="voice-card">
+          <span class="quote-mark">&ldquo;</span>
+          <p class="quote">I reported the Glenoaks streetlight and three other neighbors upvoted it within a day. Felt like someone was finally listening.</p>
+          <div class="voice-who"><div class="voice-avatar">RL</div><div><p class="voice-name">Rosa L.</p><p class="voice-tag">Sparr Heights</p></div></div>
+        </div>
+        <div class="voice-card">
+          <span class="quote-mark">&ldquo;</span>
+          <p class="quote">The polls are the first time I've felt like my opinion on a city decision actually got counted before the decision was made.</p>
+          <div class="voice-who"><div class="voice-avatar">JT</div><div><p class="voice-name">James T.</p><p class="voice-tag">Montrose</p></div></div>
+        </div>
+        <div class="voice-card">
+          <span class="quote-mark">&ldquo;</span>
+          <p class="quote">Organized a wash cleanup through the discussion board and had six people show up who I'd never have reached otherwise.</p>
+          <div class="voice-who"><div class="voice-avatar">DK</div><div><p class="voice-name">Dana K.</p><p class="voice-tag">Verdugo Woodlands</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-top:40px;">
+    <div class="layout-2col">
+      <div>
+        <div class="section-head">
+          <h2>Recently reported</h2>
+          <p>The latest issues raised by neighbors across Glendale.</p>
+        </div>
+        <div id="home-feed-preview"></div>
+        <button class="btn btn-ghost" onclick="showView('feedback')" style="margin-top:6px;">See all feedback</button>
+
+        <div class="adunit-wrap">
+          <div class="adunit-label">Advertisement</div>
+          <!-- LIVE AD SLOT: replace this block with your ad network's real unit code once you have an account.
+               For Google AdSense: paste your <ins class="adsbygoogle" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX"></ins>
+               snippet here, and add <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> once in <head>.
+               Until then this shows a locally-sold placeholder so the layout and rate card make sense together. -->
+          <div class="ad-slot">
+            <div class="ad-label">Sponsored &middot; locally sold</div>
+            <div class="ad-body">
+              <div>
+                <h4>Your local business, seen by every Glendale neighbor here</h4>
+                <p>This slot is sold directly to Glendale businesses, or run as a Google Ads unit &mdash; see Advertise.</p>
+              </div>
+              <button class="btn btn-ghost" onclick="showView('advertise')">Learn about advertising</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:18px;">
+          <h3 class="serif" style="margin:0 0 8px;font-size:18px;font-weight:500;">How it works</h3>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 10px;">Report an issue, and it's visible to your neighbors and routed by category so council offices can see what's building up in each district.</p>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin:0;">Everything you post here is visible to everyone using this app &mdash; it's a shared, public board, not a private ticket.</p>
+        </div>
+        <div class="card">
+          <h3 class="serif" style="margin:0 0 8px;font-size:18px;font-weight:500;">This week's poll</h3>
+          <div id="home-poll-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK -->
+<section id="view-feedback" class="view">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Report and track feedback</h2>
+      <p>Every report here is public, so neighbors can back you up with an upvote and council offices can see where the pressure is.</p>
+    </div>
+    <div class="layout-2col">
+      <div>
+        <div class="filter-bar" id="filter-bar"></div>
+        <div id="feedback-list"></div>
+      </div>
+      <div>
+        <div class="ad-placeholder ad-rectangle">
+          <div class="ad-size">Ad space &middot; 300 &times; 250</div>
+          <div class="ad-sub">Sold to a local business, or filled by Google AdSense once live</div>
+        </div>
+        <div class="card">
+          <h3 class="serif" style="margin:0 0 14px;font-size:18px;font-weight:500;">Submit a report</h3>
+          <form id="feedback-form" novalidate>
+            <div class="field">
+              <label for="fb-title">What's the issue</label>
+              <input id="fb-title" type="text" placeholder="Broken streetlight on Glenoaks">
+              <div class="err" id="err-title">Enter a short title.</div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="fb-category">Category</label>
+                <select id="fb-category">
+                  <option value="streets">Streets &amp; sidewalks</option>
+                  <option value="parks">Parks &amp; recreation</option>
+                  <option value="safety">Public safety</option>
+                  <option value="housing">Housing &amp; development</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="fb-neighborhood">Neighborhood</label>
+                <select id="fb-neighborhood">
+                  <option>Downtown Glendale</option>
+                  <option>Adams Hill</option>
+                  <option>Rossmoyne</option>
+                  <option>Verdugo Woodlands</option>
+                  <option>Chevy Chase Canyon</option>
+                  <option>Montrose</option>
+                  <option>Sparr Heights</option>
+                  <option>Riverside Rancho</option>
+                  <option>Other / citywide</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="fb-body">Details</label>
+              <textarea id="fb-body" placeholder="What's happening, and where exactly?"></textarea>
+              <div class="err" id="err-body">Add a bit more detail.</div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Post report</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCUSSIONS -->
+<section id="view-discussions" class="view">
+  <div class="wrap">
+    <div id="discussions-list-view">
+      <div class="section-head">
+        <h2>Discussions</h2>
+        <p>Open conversations about what's happening in Glendale &mdash; from development proposals to park cleanups.</p>
+      </div>
+      <div class="layout-2col">
+        <div id="threads-list"></div>
+        <div class="ad-placeholder ad-rectangle">
+          <div class="ad-size">Ad space &middot; 300 &times; 250</div>
+          <div class="ad-sub">Sold to a local business, or filled by Google AdSense once live</div>
+        </div>
+        <div class="card">
+          <h3 class="serif" style="margin:0 0 14px;font-size:18px;font-weight:500;">Start a discussion</h3>
+          <div class="field">
+            <label for="td-title">Topic</label>
+            <input id="td-title" type="text" placeholder="Thoughts on the new bike lanes on Brand?">
+            <div class="err" id="err-td-title">Give your topic a title.</div>
+          </div>
+          <div class="field">
+            <label for="td-body">Opening post</label>
+            <textarea id="td-body" placeholder="Start the conversation..."></textarea>
+            <div class="err" id="err-td-body">Say a bit more to start things off.</div>
+          </div>
+          <div class="field">
+            <label for="td-author">Your name</label>
+            <input id="td-author" type="text" placeholder="First name or username">
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="createThread()">Post discussion</button>
+        </div>
+      </div>
+    </div>
+    <div id="thread-detail-view" style="display:none;"></div>
+  </div>
+</section>
+
+<!-- POLLS -->
+<section id="view-polls" class="view">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Community polls</h2>
+      <p>Quick reads on where the neighborhood stands. One vote per person, per poll.</p>
+    </div>
+    <div class="ad-placeholder ad-leaderboard">
+      <div class="ad-size">Ad space &middot; 728 &times; 90</div>
+      <div class="ad-sub">Sold to a local business, or filled by Google AdSense once live</div>
+    </div>
+    <div id="polls-list"></div>
+  </div>
+</section>
+
+<!-- COUNCIL -->
+<section id="view-council" class="view">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Council directory &amp; office hours</h2>
+      <p>Find your district representative and when they hold open office hours.</p>
+    </div>
+    <div class="sample-note">Sample profiles shown for demonstration. The City would replace these with real council members, staff photos, and current office hours before launch.</div>
+    <div class="council-grid" id="council-grid"></div>
+  </div>
+</section>
+
+<!-- FOR CITIES -->
+<section id="view-cities" class="view">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Glendale Connect for city government</h2>
+      <p>Licensed and hosted for the City of Glendale &mdash; a single, branded home for resident feedback that council offices and staff can act on.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Pilot</h3>
+        <div class="price-amount">$0</div>
+        <div class="price-sub">One council district, 90 days</div>
+        <ul>
+          <li>Feedback board for one district</li>
+          <li>Discussions and polls</li>
+          <li>Monthly summary report</li>
+          <li>Email support</li>
+        </ul>
+        <button class="btn btn-ghost" style="justify-content:center;" onclick="showToast('Pilot request noted &mdash; a real deployment would route this to city staff.')">Request a pilot</button>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge">Recommended</span>
+        <h3>Citywide</h3>
+        <div class="price-amount">$1,200<span style="font-size:14px;color:var(--ink-soft);">/mo</span></div>
+        <div class="price-sub">All districts, full council directory</div>
+        <ul>
+          <li>Everything in Pilot, citywide</li>
+          <li>Council member dashboards</li>
+          <li>Category routing to city departments</li>
+          <li>Quarterly engagement report</li>
+          <li>No ads shown to residents</li>
+        </ul>
+        <button class="btn btn-primary" style="justify-content:center;" onclick="showToast('Demo request noted &mdash; a real deployment would route this to city staff.')">Request a demo</button>
+      </div>
+      <div class="price-card">
+        <h3>Regional</h3>
+        <div class="price-amount">Custom</div>
+        <div class="price-sub">Glendale plus neighboring cities</div>
+        <ul>
+          <li>Multi-city instance</li>
+          <li>Shared regional issues (traffic, transit)</li>
+          <li>Dedicated onboarding</li>
+          <li>Custom integrations</li>
+        </ul>
+        <button class="btn btn-ghost" style="justify-content:center;" onclick="showToast('Thanks &mdash; noted for follow-up.')">Talk to us</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:28px;">
+      <h3 class="serif" style="margin:0 0 10px;font-size:18px;font-weight:500;">Why a city would pay for this</h3>
+      <p style="font-size:14px;color:var(--ink-soft);margin:0 0 10px;">Glendale Connect keeps reports public and tied to a specific neighborhood, so council offices get a live read on what each district actually cares about, instead of piecing it together from whoever shows up to a meeting.</p>
+      <p style="font-size:14px;color:var(--ink-soft);margin:0;">It also gives residents a reason to come back between issues &mdash; discussions and polls turn a one-time report into an ongoing relationship with their council office, not just a closed ticket.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ADVERTISE -->
+<section id="view-advertise" class="view">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Advertise on Glendale Connect</h2>
+      <p>Reach engaged Glendale residents &mdash; the neighbors who show up, vote in polls, and read what's happening in their district. Ads are clearly labeled and never shown on city-licensed instances.</p>
+    </div>
+    <div class="layout-2col">
+      <div>
+        <div class="card" style="margin-bottom:18px;">
+          <h3 class="serif" style="margin:0 0 10px;font-size:18px;font-weight:500;">Two ways to monetize this</h3>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 10px;"><strong style="color:var(--ink);font-weight:500;">Direct-sold ads</strong> &mdash; you contact local businesses yourself and drop their card into the ad slots below. You keep 100% and set your own rate.</p>
+          <p style="font-size:13.5px;color:var(--ink-soft);margin:0;"><strong style="color:var(--ink);font-weight:500;">Google AdSense</strong> &mdash; once you publish this site with its own domain, apply for a free AdSense account, then paste your ad unit code into the marked slot in the HTML. Google fills the space automatically and pays you per view/click. Approval usually needs some real traffic and a live domain first.</p>
+        </div>
+        <div class="card">
+          <h3 class="serif" style="margin:0 0 12px;font-size:18px;font-weight:500;">Ad placements</h3>
+          <table class="ad-specs-table">
+            <tr><th>Placement</th><th>Where it appears</th><th>Est. rate</th></tr>
+            <tr><td>Home feed banner</td><td>Between feedback posts on the home page</td><td>$150 / month</td></tr>
+            <tr><td>Discussions sidebar</td><td>Next to active discussion threads</td><td>$110 / month</td></tr>
+            <tr><td>Poll sponsor</td><td>"Presented by" line on one weekly poll</td><td>$90 / poll</td></tr>
+            <tr><td>Neighborhood spotlight</td><td>Featured card filtered to one neighborhood</td><td>$60 / month</td></tr>
+          </table>
+        </div>
+        <div class="ad-slot">
+          <div class="ad-label">Example placement</div>
+          <div class="ad-body">
+            <div>
+              <h4>Montrose Hardware &mdash; open til 7pm this week</h4>
+              <p>This is what a sponsored card looks like inside the feedback feed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="serif" style="margin:0 0 10px;font-size:18px;font-weight:500;">Good fit for</h3>
+        <ul style="font-size:14px;color:var(--ink-soft);padding-left:18px;margin:0 0 16px;">
+          <li>Local businesses near reported issues</li>
+          <li>Community orgs and neighborhood councils</li>
+          <li>Candidates during election season (clearly labeled)</li>
+          <li>Regional services (utilities, transit, schools)</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="showToast('Thanks &mdash; a real deployment would open a contact form here.')">Get ad specs</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>Glendale Connect &mdash; a student concept project for a City of Glendale digital engagement internship. Not an official City of Glendale service.</div>
+    <div>Sample data shown to demonstrate functionality.</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = {
+  streets: {label:'Streets & sidewalks', cls:'cat-streets'},
+  parks: {label:'Parks & recreation', cls:'cat-parks'},
+  safety: {label:'Public safety', cls:'cat-safety'},
+  housing: {label:'Housing & development', cls:'cat-housing'},
+  other: {label:'Other', cls:'cat-other'}
+};
+const STATUSES = ['new','review','progress','resolved'];
+const STATUS_LABEL = {new:'New', review:'Under review', progress:'In progress', resolved:'Resolved'};
+
+let feedbackPosts = [];
+let threads = [];
+let polls = [];
+let votedPolls = [];
+let activeFilter = 'all';
+let currentThreadId = null;
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function timeAgo(iso){
+  const d = new Date(iso); const diff = Math.floor((Date.now()-d.getTime())/60000);
+  if(diff < 60) return diff+'m ago';
+  if(diff < 1440) return Math.floor(diff/60)+'h ago';
+  return Math.floor(diff/1440)+'d ago';
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+async function storageGet(key, shared, fallback){
+  try{
+    const r = await window.storage.get(key, shared);
+    return r ? JSON.parse(r.value) : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+async function storageSet(key, value, shared){
+  try{ await window.storage.set(key, JSON.stringify(value), shared); }
+  catch(e){ console.error('storage set failed', e); }
+}
+
+function seedFeedback(){
+  return [
+    {id:uid(), title:'Streetlight out on Glenoaks near Kenneth', category:'streets', neighborhood:'Sparr Heights', body:'Been dark for about two weeks, hard to see the crosswalk at night.', status:'review', upvotes:14, date:new Date(Date.now()-3600e3*20).toISOString()},
+    {id:uid(), title:'Overflowing trash cans at Pacific Park', category:'parks', neighborhood:'Downtown Glendale', body:'Every weekend the bins are overflowing by Sunday afternoon.', status:'new', upvotes:9, date:new Date(Date.now()-3600e3*5).toISOString()},
+    {id:uid(), title:'Speeding cut-through traffic on Kenneth Rd', category:'safety', neighborhood:'Verdugo Woodlands', body:'Cars are using this as a shortcut and going well over 25mph near the elementary school.', status:'progress', upvotes:31, date:new Date(Date.now()-3600e3*72).toISOString()},
+    {id:uid(), title:'New ADU proposal near Adams Square', category:'housing', neighborhood:'Adams Hill', body:'Would like more detail on parking impact before the planning meeting.', status:'new', upvotes:6, date:new Date(Date.now()-3600e3*10).toISOString()},
+    {id:uid(), title:'Pothole cluster on Honolulu Ave', category:'streets', neighborhood:'Montrose', body:'Three deep potholes right where the road curves near the shops.', status:'resolved', upvotes:22, date:new Date(Date.now()-3600e3*200).toISOString()}
+  ];
+}
+function seedThreads(){
+  return [
+    {id:uid(), title:'Thoughts on the new bike lanes on Brand?', author:'Priya', body:'Curious what people think now that they have been in for a month. I like them but the loading zone changes are rough for deliveries.', date:new Date(Date.now()-3600e3*30).toISOString(),
+      replies:[{author:'Marco', body:'Same, way safer on my commute but the delivery trucks double-park in the lane now.', date:new Date(Date.now()-3600e3*20).toISOString()}]},
+    {id:uid(), title:'Organizing a cleanup day for Verdugo Wash', author:'Dana', body:'Looking for a few neighbors to help with a Saturday morning cleanup. Thinking gloves, trash bags, maybe 9 to 11am.', date:new Date(Date.now()-3600e3*50).toISOString(), replies:[]},
+    {id:uid(), title:'Is anyone else concerned about parking near the new development on Central?', author:'Hovsep', body:'The environmental review mentions added units but I do not see a parking plan. Anyone been to a meeting on this?', date:new Date(Date.now()-3600e3*100).toISOString(), replies:[]}
+  ];
+}
+function seedPolls(){
+  return [
+    {id:uid(), question:'Should the City add protected bike lanes on Colorado St?', options:[{label:'Yes, extend them',votes:142},{label:'No, keep as is',votes:58},{label:'Not sure / need more info',votes:31}]},
+    {id:uid(), question:'What should the next community event focus on?', options:[{label:'Neighborhood cleanup',votes:64},{label:'Local business fair',votes:80},{label:'Arts and culture night',votes:47}]}
+  ];
+}
+
+async function loadAll(){
+  feedbackPosts = await storageGet('feedback:posts', true, null);
+  if(!feedbackPosts){ feedbackPosts = seedFeedback(); await storageSet('feedback:posts', feedbackPosts, true); }
+  threads = await storageGet('discussions:threads', true, null);
+  if(!threads){ threads = seedThreads(); await storageSet('discussions:threads', threads, true); }
+  polls = await storageGet('polls:list', true, null);
+  if(!polls){ polls = seedPolls(); await storageSet('polls:list', polls, true); }
+  votedPolls = await storageGet('polls:voted', false, []);
+  renderAll();
+}
+
+function renderAll(){
+  renderStats();
+  renderFilterBar();
+  renderFeedback();
+  renderHomeFeedPreview();
+  renderThreadsList();
+  renderPolls();
+  renderHomePollPreview();
+  renderCouncil();
+  renderPulse();
+}
+
+function renderPulse(){
+  const items = [];
+  [...feedbackPosts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4).forEach(p=>{
+    items.push(`${p.upvotes} upvotes on "${p.title}" in ${p.neighborhood}`);
+  });
+  [...threads].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,2).forEach(t=>{
+    items.push(`New discussion: "${t.title}"`);
+  });
+  polls.forEach(p=>{
+    items.push(`${pollTotal(p)} votes so far on "${p.question}"`);
+  });
+  const track = document.getElementById('pulse-track');
+  const html = items.map(i=>`<span class="pulse-item"><span class="dot"></span>${escapeHTML(i)}</span>`).join('');
+  track.innerHTML = html + html;
+}
+
+function renderStats(){
+  document.getElementById('stat-open').textContent = feedbackPosts.filter(p=>p.status!=='resolved').length;
+  document.getElementById('stat-resolved').textContent = feedbackPosts.filter(p=>p.status==='resolved').length;
+  document.getElementById('stat-threads').textContent = threads.length;
+}
+
+function renderFilterBar(){
+  const bar = document.getElementById('filter-bar');
+  const cats = ['all', ...Object.keys(CATS)];
+  bar.innerHTML = cats.map(c => {
+    const label = c==='all' ? 'All reports' : CATS[c].label;
+    return `<button class="chip ${activeFilter===c?'active':''}" data-cat="${c}">${label}</button>`;
+  }).join('');
+  bar.querySelectorAll('.chip').forEach(el=>{
+    el.addEventListener('click', ()=>{ activeFilter = el.dataset.cat; renderFilterBar(); renderFeedback(); });
+  });
+}
+
+function feedbackItemHTML(p){
+  const cat = CATS[p.category] || CATS.other;
+  return `<div class="feedback-item ${cat.cls}">
+    <div class="fi-top">
+      <p class="fi-title">${escapeHTML(p.title)}</p>
+      <button class="upvote-btn" onclick="upvote('${p.id}')" aria-label="Upvote this report"><i>&#9650;</i> ${p.upvotes}</button>
+    </div>
+    <div class="fi-meta">${cat.label} &middot; ${escapeHTML(p.neighborhood)} &middot; ${timeAgo(p.date)}</div>
+    <p class="fi-body">${escapeHTML(p.body)}</p>
+    <div class="fi-bottom">
+      <span class="status-dot status-${p.status}"><span class="dot"></span>${STATUS_LABEL[p.status]}</span>
+    </div>
+  </div>`;
+}
+
+function renderFeedback(){
+  const list = document.getElementById('feedback-list');
+  const items = activeFilter==='all' ? feedbackPosts : feedbackPosts.filter(p=>p.category===activeFilter);
+  const sorted = [...items].sort((a,b)=> new Date(b.date)-new Date(a.date));
+  list.innerHTML = sorted.length ? sorted.map(feedbackItemHTML).join('') : `<div class="empty">No reports in this category yet. Be the first to post one.</div>`;
+}
+
+function renderHomeFeedPreview(){
+  const el = document.getElementById('home-feed-preview');
+  const top = [...feedbackPosts].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0,3);
+  el.innerHTML = top.map(feedbackItemHTML).join('');
+}
+
+async function upvote(id){
+  const p = feedbackPosts.find(x=>x.id===id);
+  if(!p) return;
+  p.upvotes += 1;
+  await storageSet('feedback:posts', feedbackPosts, true);
+  renderFeedback(); renderHomeFeedPreview();
+}
+
+function escapeHTML(str){
+  const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+}
+
+document.getElementById('feedback-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const title = document.getElementById('fb-title').value.trim();
+  const category = document.getElementById('fb-category').value;
+  const neighborhood = document.getElementById('fb-neighborhood').value;
+  const body = document.getElementById('fb-body').value.trim();
+  document.getElementById('err-title').style.display = title ? 'none':'block';
+  document.getElementById('err-body').style.display = body ? 'none':'block';
+  if(!title || !body) return;
+  feedbackPosts.push({id:uid(), title, category, neighborhood, body, status:'new', upvotes:1, date:new Date().toISOString()});
+  await storageSet('feedback:posts', feedbackPosts, true);
+  document.getElementById('feedback-form').reset();
+  renderFeedback(); renderHomeFeedPreview(); renderStats();
+  showToast('Report posted.');
+});
+
+function renderThreadsList(){
+  const list = document.getElementById('threads-list');
+  const sorted = [...threads].sort((a,b)=> new Date(b.date)-new Date(a.date));
+  list.innerHTML = sorted.length ? sorted.map(t => `
+    <div class="thread" onclick="openThread('${t.id}')">
+      <h3>${escapeHTML(t.title)}</h3>
+      <div class="meta">${escapeHTML(t.author)} &middot; ${timeAgo(t.date)} &middot; ${t.replies.length} ${t.replies.length===1?'reply':'replies'}</div>
+      <p class="snippet">${escapeHTML(t.body.slice(0,110))}${t.body.length>110?'...':''}</p>
+    </div>`).join('') : `<div class="empty">No discussions yet. Start the first one.</div>`;
+}
+
+function openThread(id){
+  currentThreadId = id;
+  const t = threads.find(x=>x.id===id);
+  document.getElementById('discussions-list-view').style.display = 'none';
+  const dv = document.getElementById('thread-detail-view');
+  dv.style.display = 'block';
+  dv.innerHTML = `
+    <button class="back-link" onclick="closeThread()">&larr; Back to discussions</button>
+    <div class="thread-detail">
+      <h2 class="serif" style="margin:0 0 6px;font-size:24px;font-weight:500;">${escapeHTML(t.title)}</h2>
+      <div class="meta" style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">${escapeHTML(t.author)} &middot; ${timeAgo(t.date)}</div>
+      <p style="font-size:15px;">${escapeHTML(t.body)}</p>
+      <div id="replies-wrap">
+        ${t.replies.map(r=>`<div class="reply"><div class="meta">${escapeHTML(r.author)} &middot; ${timeAgo(r.date)}</div><p style="margin:0;font-size:14px;">${escapeHTML(r.body)}</p></div>`).join('')}
+      </div>
+      <div class="field" style="margin-top:18px;">
+        <label for="reply-body">Add a reply</label>
+        <textarea id="reply-body" placeholder="Share your thoughts..."></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="reply-author">Your name</label><input id="reply-author" type="text" placeholder="First name or username"></div>
+        <div></div>
+      </div>
+      <button class="btn btn-primary" onclick="addReply()">Post reply</button>
+    </div>`;
+}
+function closeThread(){
+  document.getElementById('thread-detail-view').style.display = 'none';
+  document.getElementById('discussions-list-view').style.display = 'block';
+}
+async function addReply(){
+  const body = document.getElementById('reply-body').value.trim();
+  const author = document.getElementById('reply-author').value.trim() || 'Neighbor';
+  if(!body){ showToast('Write a reply first.'); return; }
+  const t = threads.find(x=>x.id===currentThreadId);
+  t.replies.push({author, body, date:new Date().toISOString()});
+  await storageSet('discussions:threads', threads, true);
+  openThread(currentThreadId);
+}
+async function createThread(){
+  const title = document.getElementById('td-title').value.trim();
+  const body = document.getElementById('td-body').value.trim();
+  const author = document.getElementById('td-author').value.trim() || 'Neighbor';
+  document.getElementById('err-td-title').style.display = title ? 'none':'block';
+  document.getElementById('err-td-body').style.display = body ? 'none':'block';
+  if(!title || !body) return;
+  threads.push({id:uid(), title, author, body, date:new Date().toISOString(), replies:[]});
+  await storageSet('discussions:threads', threads, true);
+  document.getElementById('td-title').value=''; document.getElementById('td-body').value=''; document.getElementById('td-author').value='';
+  renderThreadsList(); renderStats();
+  showToast('Discussion posted.');
+}
+
+function pollTotal(poll){ return poll.options.reduce((s,o)=>s+o.votes,0); }
+function pollCardHTML(poll){
+  const total = pollTotal(poll);
+  const voted = votedPolls.includes(poll.id);
+  return `<div class="poll-card">
+    <h3>${escapeHTML(poll.question)}</h3>
+    <div class="poll-meta">${total} vote${total===1?'':'s'}</div>
+    ${poll.options.map((o,i)=>{
+      const pct = total ? Math.round((o.votes/total)*100) : 0;
+      return `<div class="poll-option" ${voted?'':`onclick="votePoll('${poll.id}',${i})"`}>
+        <div class="fill" style="width:${voted?pct:0}%;"></div>
+        <div class="txt"><span>${escapeHTML(o.label)}</span><span>${voted?pct+'%':''}</span></div>
+      </div>`;
+    }).join('')}
+    ${voted ? '<div class="poll-voted">You voted in this poll.</div>' : ''}
+  </div>`;
+}
+function renderPolls(){
+  document.getElementById('polls-list').innerHTML = polls.map(pollCardHTML).join('');
+}
+function renderHomePollPreview(){
+  const el = document.getElementById('home-poll-preview');
+  if(polls.length) el.innerHTML = pollCardHTML(polls[0]);
+}
+async function votePoll(pollId, optionIndex){
+  if(votedPolls.includes(pollId)) return;
+  const poll = polls.find(p=>p.id===pollId);
+  poll.options[optionIndex].votes += 1;
+  votedPolls.push(pollId);
+  await storageSet('polls:list', polls, true);
+  await storageSet('polls:voted', votedPolls, false);
+  renderPolls(); renderHomePollPreview();
+  showToast('Vote recorded.');
+}
+
+const COUNCIL = [
+  {initials:'AM', name:'Ana Marín', role:'District 1 Council Member', hours:'Office hours: 1st Tuesdays, 4-6pm, City Hall'},
+  {initials:'DK', name:'David Kwon', role:'District 2 Council Member', hours:'Office hours: 2nd Thursdays, 5-7pm, Pacific Park'},
+  {initials:'SH', name:'Sona Hakobyan', role:'District 3 Council Member', hours:'Office hours: 1st Wednesdays, 4-6pm, Montrose Library'},
+  {initials:'RT', name:'Robert Tellez', role:'District 4 Council Member', hours:'Office hours: 3rd Tuesdays, 5-7pm, Sparr Heights Center'},
+  {initials:'MJ', name:'Maria Johnson', role:'Mayor, City of Glendale', hours:'Office hours: Monthly, by appointment'},
+  {initials:'CE', name:'Community Engagement Office', role:'City staff liaison', hours:'Mon-Fri, 9am-5pm, City Hall'}
+];
+function renderCouncil(){
+  document.getElementById('council-grid').innerHTML = COUNCIL.map(c => `
+    <div class="council-card">
+      <div class="avatar">${c.initials}</div>
+      <h3>${c.name}</h3>
+      <div class="role">${c.role}</div>
+      <div class="hours">${c.hours}</div>
+    </div>`).join('');
+}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  document.getElementById('mobileNavSelect').value = name;
+  if(name!=='discussions') closeThread();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>{
+  b.addEventListener('click', ()=>showView(b.dataset.view));
+});
+document.getElementById('mobileNavSelect').addEventListener('change', (e)=>showView(e.target.value));
+
+loadAll();
+</script>
+</body>
+</html>
